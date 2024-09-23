@@ -45,6 +45,26 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+# Recurso de grupo de segurança
+resource "aws_security_group" "backend-sg" {
+  name        = "backend-sg"
+  description = "Security group for the backend instance"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Permitir acesso público na porta 80
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" # Permitir todo o tráfego de saída
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Recurso EC2 para rodar o backend
 resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
