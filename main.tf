@@ -48,7 +48,7 @@ data "aws_ami" "ubuntu" {
 # Recurso EC2 para rodar o backend
 resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
   
   # Conectar à segurança da rede
   vpc_security_group_ids = [aws_security_group.backend-sg.id]
