@@ -22,6 +22,7 @@ terraform {
   }
 }
 
+
 # Configuração do provedor AWS
 provider "aws" {
   region = "us-east-1" 
