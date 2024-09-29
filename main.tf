@@ -26,6 +26,18 @@ provider "aws" {
   region = "us-east-1" 
 }
 
+# Data source para buscar a AMI do Ubuntu
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  owners = ["099720109477"] # ID do proprietário da AMI do Ubuntu (Canonical)
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"] # Altere conforme necessário para outras versões do Ubuntu
+  }
+}
+
 # Data source para verificar se a instância SQL Server existe
 data "aws_instance" "sqlserver" {
   filter {
