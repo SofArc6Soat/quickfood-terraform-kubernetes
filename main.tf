@@ -26,25 +26,24 @@ provider "aws" {
   region = "us-east-1" 
 }
 
-resource "random_pet" "sg" {}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
+# Data source para verificar se a instância SQL Server existe
+data "aws_instance" "sqlserver" {
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    name   = "tag:Name"
+    values = ["Quickfood SQL Server"]  # Altere para o nome correto da sua instância
   }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
 }
 
-# Recurso de grupo de segurança do backend
+# Resource null para gerar erro se a instância não for encontrada
+resource "null_resource" "check_sql_instance" {
+  count = length(data.aws_instance.sqlserver) > 0 ? 0 : 1
+  
+  provisioner "local-exec" {
+    command = "echo 'A instância do SQL Server precisa ser criada primeiro antes de criar a instância do backend.'"
+  }
+}
+
+# Recurso de grupo de segurança
 resource "aws_security_group" "backend_sg" {
   name        = "backend-sg"
   description = "Security group for the backend instance"
@@ -64,24 +63,13 @@ resource "aws_security_group" "backend_sg" {
   }
 }
 
-# Recurso null para verificar a criação da instância SQL Server
-resource "null_resource" "check_sql_instance" {
-  depends_on = [aws_instance.sqlserver]
-
-  provisioner "local-exec" {
-    command = "echo 'A instância do SQL Server precisa ser criada primeiro antes de criar a instância do backend.'"
-  }
-}
-
 # Instância EC2 para rodar o backend
 resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   
-  # Conectar à segurança da rede usando as configurações exportadas do SQL
+  # Conectar à segurança da rede
   vpc_security_group_ids = [aws_security_group.backend_sg.id]
-
-  subnet_id = "subnet_id" # Use a saída da VPC para referenciar a subnet
 
   user_data = <<-EOF
               #!/bin/bash
@@ -91,7 +79,7 @@ resource "aws_instance" "backend" {
               systemctl start docker
               
               # Obtendo o IP da instância SQL Server
-              SQL_SERVER_IP="${aws_instance.sqlserver.private_ip}"
+              SQL_SERVER_IP="${data.aws_instance.sqlserver.private_ip}"
               
               # Executando o contêiner do backend
               docker run -d -p 80:80 -e SQL_SERVER_IP=$SQL_SERVER_IP sofarc6soat/quickfood-backend:latest
@@ -101,5 +89,10 @@ resource "aws_instance" "backend" {
     Name = "Quickfood Backend Server"
   }
 
-  depends_on = [null_resource.check_sql_instance] # Garante que a mensagem de verificação seja executada antes da criação do backend
+  depends_on = [null_resource.check_sql_instance]  # Dependência na verificação
+}
+
+# Saída para o IP do SQL Server
+output "sql_server_ip" {
+  value = data.aws_instance.sqlserver.private_ip
 }
