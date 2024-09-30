@@ -51,7 +51,11 @@ resource "null_resource" "check_sql_instance" {
   count = length(data.aws_instance.sqlserver) > 0 ? 0 : 1
   
   provisioner "local-exec" {
-    command = "echo 'A instância do SQL Server precisa ser criada primeiro antes de criar a instância do backend.'"
+    command = <<-EOT
+      echo "A instância do SQL Server chamada 'Quickfood SQL Server' não foi encontrada."
+      echo "Por favor, certifique-se de que a instância está criada e que o nome da tag está correto."
+      echo "Após criar a instância, você pode executar 'terraform apply' novamente."
+    EOT
   }
 }
 
