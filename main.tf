@@ -12,6 +12,7 @@ terraform {
   }
   required_version = ">= 1.1.0"
 
+  # Configuração do Terraform Cloud
   cloud {
     organization = "SofArc6Soat"
 
@@ -21,42 +22,31 @@ terraform {
   }
 }
 
-# Provedor AWS
+# Configuração do provedor AWS
 provider "aws" {
   region = "us-east-1" 
 }
 
-# Data source para buscar a AMI do Ubuntu
+resource "random_pet" "sg" {}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
-  owners = ["099720109477"] # ID do proprietário da AMI do Ubuntu (Canonical)
-
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"] # Altere conforme necessário para outras versões do Ubuntu
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
-}
 
-# Data source para verificar se a instância SQL Server existe
-data "aws_instance" "sqlserver" {
   filter {
-    name   = "tag:Name"
-    values = ["Quickfood SQL Server"]  # Altere para o nome correto da sua instância
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
-}
 
-# Resource null para gerar erro se a instância não for encontrada
-resource "null_resource" "check_sql_instance" {
-  count = length(data.aws_instance.sqlserver) > 0 ? 0 : 1
-  
-  provisioner "local-exec" {
-    command = "echo 'A instância do SQL Server precisa ser criada primeiro antes de criar a instância do backend.'"
-  }
+  owners = ["099720109477"] # Canonical
 }
 
 # Recurso de grupo de segurança
-resource "aws_security_group" "backend_sg" {
+resource "aws_security_group" "backend-sg" {
   name        = "backend-sg"
   description = "Security group for the backend instance"
 
@@ -75,13 +65,13 @@ resource "aws_security_group" "backend_sg" {
   }
 }
 
-# Instância EC2 para rodar o backend
+# Recurso EC2 para rodar o backend
 resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   
   # Conectar à segurança da rede
-  vpc_security_group_ids = [aws_security_group.backend_sg.id]
+  vpc_security_group_ids = [aws_security_group.backend-sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -89,22 +79,10 @@ resource "aws_instance" "backend" {
               apt-get update
               apt-get install -y docker.io
               systemctl start docker
-              
-              # Obtendo o IP da instância SQL Server
-              SQL_SERVER_IP="${data.aws_instance.sqlserver.private_ip}"
-              
-              # Executando o contêiner do backend
-              docker run -d -p 80:80 -e SQL_SERVER_IP=$SQL_SERVER_IP sofarc6soat/quickfood-backend:latest
+              docker run -d -p 80:80 sofarc6soat/quickfood-backend:latest
               EOF
 
   tags = {
     Name = "Quickfood Backend Server"
   }
-
-  depends_on = [null_resource.check_sql_instance]  # Dependência na verificação
-}
-
-# Saída para o IP do SQL Server
-output "sql_server_ip" {
-  value = data.aws_instance.sqlserver.private_ip
 }
