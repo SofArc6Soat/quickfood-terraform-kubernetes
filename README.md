@@ -12,7 +12,6 @@
  ```plaintext
  .
  ├── main.tf           # Configuração principal do Terraform
- └── variables.tf      # Variáveis utilizadas na configuração
  ```
  
  ## Como Configurar o Terraform
@@ -26,7 +25,7 @@
  
  1. **Clone o repositório:**
     ```bash
-    git clone https://github.com/seu_usuario/quickfood-backend.git
+    git clone https://github.com/SofArc6Soat/quickfood-terraform-kubernetes.git
     cd quickfood-backend/infra
     ```
  
@@ -60,4 +59,9 @@
  
  - Instâncias EC2 para rodar a aplicação.
  - Grupos de segurança para gerenciar o acesso à aplicação.
+
+## Autores
+
+- **Anderson Lopez de Andrade RM: 350452** <br>
+- **Henrique Alonso Vicente RM: 354583**<br>
  
