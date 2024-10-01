@@ -22,10 +22,20 @@ terraform {
   }
 }
 
-
 # Configuração do provedor AWS
 provider "aws" {
   region = "us-east-1" 
+}
+
+# Recuperar o estado remoto do projeto de banco de dados
+data "terraform_remote_state" "db" {
+  backend = "remote"
+  config = {
+    organization = "SofArc6Soat"
+    workspaces = {
+      name = "quickfood-database"
+    }
+  }
 }
 
 resource "random_pet" "sg" {}
@@ -58,6 +68,13 @@ resource "aws_security_group" "backend-sg" {
     cidr_blocks = ["0.0.0.0/0"] # Permitir acesso público na porta 80
   }
 
+  ingress {
+    from_port   = 1433
+    to_port     = 1433
+    protocol    = "tcp"
+    cidr_blocks = [data.terraform_remote_state.db.outputs.vpc_id] # Permitir tráfego interno na VPC
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -71,16 +88,19 @@ resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   
-  # Conectar à segurança da rede
+  # Conectar à segurança da rede e à mesma Subnet do banco de dados
   vpc_security_group_ids = [aws_security_group.backend-sg.id]
+  subnet_id              = data.terraform_remote_state.db.outputs.subnet_id
 
+  # Script de inicialização da instância EC2
   user_data = <<-EOF
               #!/bin/bash
-              # Script de inicialização da instância EC2
               apt-get update
               apt-get install -y docker.io
               systemctl start docker
-              docker run -d -p 80:80 sofarc6soat/quickfood-backend:latest
+              docker run -d -p 80:80 \
+              -e "ConnectionStrings__DefaultConnection=Server=${data.terraform_remote_state.db.outputs.sql_server_ip};Database=quickfood;User Id=sa;Password=quickfood-backend#2024;" \
+              sofarc6soat/quickfood-backend:latest
               EOF
 
   tags = {
