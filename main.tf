@@ -23,7 +23,7 @@ terraform {
 
 # Provedor AWS
 provider "aws" {
-  region = "us-east-1" 
+  region = "us-east-1"
 }
 
 # Data source para buscar a AMI do Ubuntu
@@ -34,7 +34,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"] # Altere conforme necessário para outras versões do Ubuntu
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 }
 
@@ -42,24 +42,24 @@ data "aws_ami" "ubuntu" {
 data "aws_instance" "sqlserver" {
   filter {
     name   = "tag:Name"
-    values = ["Quickfood SQL Server"]  # Altere para o nome correto da sua instância
+    values = ["Quickfood SQL Server"]  # Certifique-se de que a tag está correta
   }
 }
 
-# Resource null para gerar erro se a instância não for encontrada
+# Recurso null para gerar erro se a instância SQL Server não for encontrada
 resource "null_resource" "check_sql_instance" {
-  count = length(data.aws_instance.sqlserver) > 0 ? 0 : 1
-  
+  count = length(data.aws_instance.sqlserver.ids) > 0 ? 0 : 1
+
   provisioner "local-exec" {
     command = <<-EOT
-      echo "A instância do SQL Server chamada 'Quickfood SQL Server' não foi encontrada. "
-      echo "Por favor, certifique-se de que a instância está criada e que o nome da tag está correto."
-      echo "Após criar a instância, você pode executar 'terraform apply' novamente."
+      echo "ERRO: A instância do SQL Server chamada 'Quickfood SQL Server' não foi encontrada."
+      echo "Certifique-se de que a instância foi criada, que a tag 'Name' está correta e que está na região us-east-1."
+      exit 1
     EOT
   }
 }
 
-# Recurso de grupo de segurança
+# Recurso de grupo de segurança para o backend
 resource "aws_security_group" "backend_sg" {
   name        = "backend-sg"
   description = "Security group for the backend instance"
@@ -84,12 +84,10 @@ resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   
-  # Conectar à segurança da rede
   vpc_security_group_ids = [aws_security_group.backend_sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
-              # Script de inicialização da instância EC2
               apt-get update
               apt-get install -y docker.io
               systemctl start docker
@@ -105,7 +103,7 @@ resource "aws_instance" "backend" {
     Name = "Quickfood Backend Server"
   }
 
-  depends_on = [null_resource.check_sql_instance]  # Dependência na verificação
+  depends_on = [null_resource.check_sql_instance]  # Só cria o backend se a instância SQL Server existir
 }
 
 # Saída para o IP do SQL Server
