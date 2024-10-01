@@ -52,7 +52,7 @@ resource "null_resource" "check_sql_instance" {
   
   provisioner "local-exec" {
     command = <<-EOT
-      echo "A instância do SQL Server chamada 'Quickfood SQL Server' não foi encontrada."
+      echo "A instância do SQL Server chamada 'Quickfood SQL Server' não foi encontrada. "
       echo "Por favor, certifique-se de que a instância está criada e que o nome da tag está correto."
       echo "Após criar a instância, você pode executar 'terraform apply' novamente."
     EOT
