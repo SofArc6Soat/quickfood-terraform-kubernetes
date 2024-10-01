@@ -24,6 +24,22 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Adicionando a busca de AMI do Ubuntu
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # ID do dono oficial das AMIs da Canonical (Ubuntu)
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 # Importando o estado remoto do projeto de banco de dados
 data "terraform_remote_state" "db" {
   backend = "remote"
