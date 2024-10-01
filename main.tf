@@ -48,7 +48,7 @@ data "aws_instance" "sqlserver" {
 
 # Recurso null para gerar erro se a instância SQL Server não for encontrada
 resource "null_resource" "check_sql_instance" {
-  count = length(data.aws_instance.sqlserver.ids) > 0 ? 0 : 1
+  count = data.aws_instance.sqlserver.id != "" ? 0 : 1
 
   provisioner "local-exec" {
     command = <<-EOT
