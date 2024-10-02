@@ -54,8 +54,8 @@ data "terraform_remote_state" "db" {
 resource "random_pet" "sg" {}
 
 # Criando o Security Group para a aplicação
-resource "aws_security_group" "backend_sg" {
-  name        = "backend-sg-1"
+resource "aws_security_group" "backend_sg-2" {
+  name        = "backend-sg-2"
   description = "Security group for the backend instance"
 
   ingress {
@@ -85,7 +85,7 @@ resource "aws_instance" "backend" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
-  vpc_security_group_ids = [aws_security_group.backend_sg.id]
+  vpc_security_group_ids = [aws_security_group.backend_sg-2.id]
   subnet_id              = data.terraform_remote_state.db.outputs.subnet_id
 
   user_data = <<-EOF
