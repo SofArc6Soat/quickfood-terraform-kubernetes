@@ -55,7 +55,7 @@ resource "random_pet" "sg" {}
 
 # Criando o Security Group para a aplicação
 resource "aws_security_group" "backend_sg" {
-  name        = "backend-sg"
+  name        = "backend-sg-1"
   description = "Security group for the backend instance"
 
   ingress {
