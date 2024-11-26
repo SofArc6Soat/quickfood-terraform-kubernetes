@@ -7,7 +7,7 @@ variable "regionDefault" {
 variable "projectName" {
     description = "The name of the project"
     type        = string
-    default     = "EKS-QuickFood"
+    default     = "EKS-QUICKFOOD"
 }
 
 variable "labRole" {
@@ -42,6 +42,12 @@ variable "principalArn" {
 
 variable "policyArn" {
     description = "The ARN of the policy"
+    type        = string
+    default     = ""
+}
+
+variable "vpc_id" {
+    description = "The VPC ID where the security groups will be created"
     type        = string
     default     = ""
 }
