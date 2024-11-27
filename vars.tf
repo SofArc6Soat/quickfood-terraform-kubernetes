@@ -13,19 +13,19 @@ variable "projectName" {
 variable "labRole" {
     description = "The role for the lab environment"
     type        = string
-    default     = ""
+    default     = "arn:aws:iam::869935090923:role/LabRole"
 }
 
 variable "accessConfig" {
     description = "The access configuration for the infrastructure"
     type        = string
-    default     = ""
+    default = "API_AND_CONFIG_MAP"
 }
 
 variable "nodeGroup" {
     description = "The node group for the EKS cluster"
     type        = string
-    default     = "fiap"
+    default     = "quickfood"
 }
 
 variable "instanceType" {
@@ -37,17 +37,24 @@ variable "instanceType" {
 variable "principalArn" {
     description = "The ARN of the principal"
     type        = string
-    default     = ""
+    default     = "arn:aws:iam::869935090923:role/SofArc6Soat"
 }
 
 variable "policyArn" {
     description = "The ARN of the policy"
     type        = string
-    default     = ""
+    default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }
 
-variable "vpc_id" {
-    description = "The VPC ID where the security groups will be created"
-    type        = string
-    default     = ""
+variable "db_username" {
+  description = "The username for the RDS instance"
+  type        = string
+  default     = "sa"
+}
+
+variable "db_password" {
+  description = "The password for the RDS instance"
+  type        = string
+  default     = "quickfood-backend#2024"
+  sensitive   = true
 }

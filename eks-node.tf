@@ -16,14 +16,14 @@ resource "aws_eks_node_group" "eks-node" {
     max_unavailable = 1
   }
 
-  # Associando os grupos de segurança
   remote_access {
     ec2_ssh_key = var.accessConfig
     source_security_group_ids = [
       aws_security_group.backend_sg_backoffice.id,
       aws_security_group.backend_sg_pagamento.id,
       aws_security_group.backend_sg_pedido.id,
-      aws_security_group.backend_sg_producao.id
+      aws_security_group.backend_sg_producao.id,
+      aws_security_group.backend_sg_sql.id
     ]
   }
 }

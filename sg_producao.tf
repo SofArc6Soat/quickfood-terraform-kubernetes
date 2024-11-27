@@ -1,8 +1,8 @@
 resource "aws_security_group" "backend_sg_producao" {
-    name        = "SG-${var.projectName}-producao"
+    name        = "SG-${var.projectName}-PRODUCAO"
     description = "Security group for backend servers"
     vpc_id      = ""
-
+    
     ingress {
         from_port   = 5003
         to_port     = 5003
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_producao" {
     }
 
     tags = {
-        Name = "SG-${var.projectName}-producao"
+        Name = "SG-${var.projectName}-PRODUCAO"
     }
 }
