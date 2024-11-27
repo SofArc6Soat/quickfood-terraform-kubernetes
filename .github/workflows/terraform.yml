@@ -1,14 +1,13 @@
-name: "Terraform Backend 1"
+name: Create Infra AWS
 
 on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   terraform:
-    name: "Terraform"
+    name: Terraform
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -23,7 +22,11 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt
+        run: terraform fmt -check
+
+      - name: Terraform Destroy
+        id: destroy
+        run: terraform destroy
 
       - name: Terraform Init
         id: init
