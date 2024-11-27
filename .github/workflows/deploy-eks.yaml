@@ -1,0 +1,67 @@
+name: Deploy AWS Academy - EKS
+
+on:
+  workflow_run:
+    workflows: ["Create Infra AWS"]
+    types:
+      - completed
+
+env:
+  REGION_DEFAULT: "us-east-1"
+
+jobs:
+  deploy:
+    name: Deploy AWS
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: AWS Configure
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ID }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.REGION_DEFAULT }}
+
+      # Deploy Backoffice
+      - name: Update Kube Config for Backoffice
+        run: aws eks update-kubeconfig --name EKS-QUICKFOOD-BACKOFFICE --region ${{ env.REGION_DEFAULT }}
+
+      - name: Deploy Backoffice Service
+        run: kubectl apply -f k8s/eks-svc-backoffice.yaml
+
+      - name: Deploy Backoffice Deployment
+        run: kubectl apply -f k8s/eks-deployment-backoffice.yaml
+
+      # Deploy Pagamento
+      - name: Update Kube Config for Pagamento
+        run: aws eks update-kubeconfig --name EKS-QUICKFOOD-PAGAMENTO --region ${{ env.REGION_DEFAULT }}
+
+      - name: Deploy Pagamento Service
+        run: kubectl apply -f k8s/eks-svc-pagamento.yaml
+
+      - name: Deploy Pagamento Deployment
+        run: kubectl apply -f k8s/eks-deployment-pagamento.yaml
+
+      # Deploy Pedido
+      - name: Update Kube Config for Pedido
+        run: aws eks update-kubeconfig --name EKS-QUICKFOOD-PEDIDO --region ${{ env.REGION_DEFAULT }}
+
+      - name: Deploy Pedido Service
+        run: kubectl apply -f k8s/eks-svc-pedido.yaml
+
+      - name: Deploy Pedido Deployment
+        run: kubectl apply -f k8s/eks-deployment-pedido.yaml
+
+      # Deploy Producao
+      - name: Update Kube Config for Producao
+        run: aws eks update-kubeconfig --name EKS-QUICKFOOD-PRODUCAO --region ${{ env.REGION_DEFAULT }}
+
+      - name: Deploy Producao Service
+        run: kubectl apply -f k8s/eks-svc-producao.yaml
+
+      - name: Deploy Producao Deployment
+        run: kubectl apply -f k8s/eks-deployment-producao.yaml
