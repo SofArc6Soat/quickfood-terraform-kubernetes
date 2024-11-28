@@ -7,7 +7,7 @@ variable "regionDefault" {
 variable "projectName" {
   description = "The name of the project"
   type        = string
-  default     = "EKS-QUICKFOOD"
+  default     = "EKS-QuickFood"
 }
 
 variable "labRole" {

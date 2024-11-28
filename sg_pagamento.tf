@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_sg_pagamento" {
-  name        = "SG-${var.projectName}-PAGAMENTO"
+  name        = "SG-${var.projectName}-Pagamento"
   description = "Security group for backend servers"
   vpc_id      = ""
 
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_pagamento" {
   }
 
   tags = {
-    Name = "SG-${var.projectName}-PAGAMENTO"
+    Name = "SG-${var.projectName}-Pagamento"
   }
 }

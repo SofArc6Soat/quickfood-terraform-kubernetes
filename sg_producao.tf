@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_sg_producao" {
-  name        = "SG-${var.projectName}-PRODUCAO"
+  name        = "SG-${var.projectName}-Producao"
   description = "Security group for backend servers"
   vpc_id      = ""
 
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_producao" {
   }
 
   tags = {
-    Name = "SG-${var.projectName}-PRODUCAO"
+    Name = "SG-${var.projectName}-Producao"
   }
 }
