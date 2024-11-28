@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks-cluster-backoffice" {
-  name     = "${var.projectName}-backoffice"
+  name     = "${var.projectName}-BackOffice"
   role_arn = var.labRole
 
   vpc_config {
@@ -13,7 +13,7 @@ resource "aws_eks_cluster" "eks-cluster-backoffice" {
 }
 
 resource "aws_eks_cluster" "eks-cluster-pagamento" {
-  name     = "${var.projectName}-pagamento"
+  name     = "${var.projectName}-Pagamento"
   role_arn = var.labRole
 
   vpc_config {
@@ -27,7 +27,7 @@ resource "aws_eks_cluster" "eks-cluster-pagamento" {
 }
 
 resource "aws_eks_cluster" "eks-cluster-pedido" {
-  name     = "${var.projectName}-pedido"
+  name     = "${var.projectName}-Pedido"
   role_arn = var.labRole
 
   vpc_config {
@@ -41,7 +41,7 @@ resource "aws_eks_cluster" "eks-cluster-pedido" {
 }
 
 resource "aws_eks_cluster" "eks-cluster-producao" {
-  name     = "${var.projectName}-producao"
+  name     = "${var.projectName}-Producao"
   role_arn = var.labRole
 
   vpc_config {

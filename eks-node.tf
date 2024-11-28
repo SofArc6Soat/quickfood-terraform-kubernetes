@@ -1,6 +1,6 @@
 resource "aws_eks_node_group" "eks-node-backoffice" {
   cluster_name    = aws_eks_cluster.eks-cluster-backoffice.name
-  node_group_name = "${var.nodeGroup}-node-group-backoffice"
+  node_group_name = "${var.nodeGroup}-ng-backoffice"
   node_role_arn   = var.labRole
   subnet_ids      = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
   disk_size       = 50
@@ -23,7 +23,7 @@ resource "aws_eks_node_group" "eks-node-backoffice" {
 
 resource "aws_eks_node_group" "eks-node-pagamento" {
   cluster_name    = aws_eks_cluster.eks-cluster-pagamento.name
-  node_group_name = "${var.nodeGroup}-node-group-pagamento"
+  node_group_name = "${var.nodeGroup}-ng-pagamento"
   node_role_arn   = var.labRole
   subnet_ids      = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
   disk_size       = 50
@@ -45,7 +45,7 @@ resource "aws_eks_node_group" "eks-node-pagamento" {
 
 resource "aws_eks_node_group" "eks-node-pedido" {
   cluster_name    = aws_eks_cluster.eks-cluster-pedido.name
-  node_group_name = "${var.nodeGroup}-node-group-pedido"
+  node_group_name = "${var.nodeGroup}-ng-pedido"
   node_role_arn   = var.labRole
   subnet_ids      = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
   disk_size       = 50
@@ -68,7 +68,7 @@ resource "aws_eks_node_group" "eks-node-pedido" {
 
 resource "aws_eks_node_group" "eks-node-producao" {
   cluster_name    = aws_eks_cluster.eks-cluster-producao.name
-  node_group_name = "${var.nodeGroup}-node-group-producao"
+  node_group_name = "${var.nodeGroup}-ng-producao"
   node_role_arn   = var.labRole
   subnet_ids      = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
   disk_size       = 50
