@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_sg_backoffice" {
-  name        = "SG-${var.projectName}-BACKOFFICE"
+  name        = "SG-${var.projectName}-BackOffice"
   description = "Security group for backend servers"
   vpc_id      = ""
 
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_backoffice" {
   }
 
   tags = {
-    Name = "SG-${var.projectName}-BACKOFFICE"
+    Name = "SG-${var.projectName}-BackOffice"
   }
 }

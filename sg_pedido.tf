@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_sg_pedido" {
-  name        = "SG-${var.projectName}-PEDIDO"
+  name        = "SG-${var.projectName}-Pedido"
   description = "Security group for backend servers"
   vpc_id      = ""
 
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_pedido" {
   }
 
   tags = {
-    Name = "SG-${var.projectName}-PEDIDO"
+    Name = "SG-${var.projectName}-Pedido"
   }
 }

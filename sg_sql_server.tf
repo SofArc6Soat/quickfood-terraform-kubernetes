@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_sg_sql" {
-  name        = "SG-${var.projectName}-SQL-SERVER"
+  name        = "SG-${var.projectName}-SQL"
   description = "Security group for SQL Server instance"
   vpc_id      = ""
 
@@ -18,6 +18,6 @@ resource "aws_security_group" "backend_sg_sql" {
   }
 
   tags = {
-    Name = "SG-${var.projectName}-SQL-SERVER"
+    Name = "SG-${var.projectName}-SQL"
   }
 }
