@@ -74,7 +74,7 @@ variable "db_engine_version" {
 variable "db_username" {
   description = "The master username for the RDS instance"
   type        = string
-  default     = "admin"
+  default     = "sa"
 }
 
 variable "db_password" {
