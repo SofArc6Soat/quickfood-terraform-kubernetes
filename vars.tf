@@ -1,7 +1,7 @@
 variable "regionDefault" {
   description = "The default region for the infrastructure"
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-2"
 }
 
 variable "projectName" {
@@ -31,7 +31,7 @@ variable "nodeGroup" {
 variable "instanceType" {
   description = "The instance type for the EC2 instances"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.medium"
 }
 
 variable "principalArn" {
@@ -44,17 +44,4 @@ variable "policyArn" {
   description = "The ARN of the policy"
   type        = string
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-}
-
-variable "db_username" {
-  description = "The username for the RDS instance"
-  type        = string
-  default     = "sa"
-}
-
-variable "db_password" {
-  description = "The password for the RDS instance"
-  type        = string
-  default     = "quickfood-backend#2024"
-  sensitive   = true
 }
