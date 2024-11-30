@@ -1,7 +1,7 @@
 variable "regionDefault" {
   description = "The default region for the infrastructure"
   type        = string
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
 variable "projectName" {

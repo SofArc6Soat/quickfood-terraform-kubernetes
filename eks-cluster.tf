@@ -15,7 +15,9 @@ resource "aws_eks_cluster" "eks-cluster" {
     "controllerManager",
     "scheduler"
   ]
-
+  tags = {
+    Name = "quickfood-db-subnet-group"
+  }
   access_config {
     authentication_mode = var.accessConfig
   }
