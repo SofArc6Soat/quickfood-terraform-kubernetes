@@ -1,4 +1,4 @@
-name: Deploy AWS Academy - EKS
+name: Deploy to EKS
 
 on:
   workflow_run:
@@ -8,7 +8,7 @@ on:
 
 env:
   REGION_DEFAULT: "us-east-1"
-  CLUSTER_NAME: "EKS-QuickFood"
+  CLUSTER_NAME: "EKS-QUICKFOOD"
 
 jobs:
   deploy:
@@ -26,3 +26,46 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ID }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.REGION_DEFAULT }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.REGION_DEFAULT }}
+
+      - name: Apply Namespace
+        run: |
+          kubectl apply -f k8s/namespace.yaml
+
+      - name: Deploy Backoffice
+        run: |
+          kubectl apply -f k8s/backoffice/deployment.yaml
+          kubectl apply -f k8s/backoffice/service.yaml
+          kubectl apply -f k8s/backoffice/ingress.yaml
+
+      - name: Deploy Pagamento
+        run: |
+          kubectl apply -f k8s/pagamento/deployment.yaml
+          kubectl apply -f k8s/pagamento/service.yaml
+          kubectl apply -f k8s/pagamento/ingress.yaml
+
+      - name: Deploy Pedido
+        run: |
+          kubectl apply -f k8s/pedido/deployment.yaml
+          kubectl apply -f k8s/pedido/service.yaml
+          kubectl apply -f k8s/pedido/ingress.yaml
+
+      - name: Deploy Producao
+        run: |
+          kubectl apply -f k8s/producao/deployment.yaml
+          kubectl apply -f k8s/producao/service.yaml
+          kubectl apply -f k8s/producao/ingress.yaml
+
+      - name: Deploy SQL Server
+        run: |
+          kubectl apply -f k8s/sqlserver/deployment.yaml
+          kubectl apply -f k8s/sqlserver/service.yaml
+          kubectl apply -f k8s/sqlserver/ingress.yaml

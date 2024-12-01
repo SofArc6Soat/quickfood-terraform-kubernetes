@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quickfood-backend-producao-deployment
+  namespace: quickfood
+  labels:
+    app: quickfood-backend-producao
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quickfood-backend-producao
+  template:
+    metadata:
+      labels:
+        app: quickfood-backend-producao
+    spec:
+      containers:
+      - name: quickfood-backend-producao
+        image: sofarc6soat/quickfood-backend-producao:latest
+        ports:
+        - containerPort: 84
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
