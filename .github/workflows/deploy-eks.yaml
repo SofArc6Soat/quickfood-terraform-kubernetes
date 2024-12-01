@@ -1,4 +1,4 @@
-name: Deploy AWS Academy - EKS
+name: Deploy to EKS
 
 on:
   workflow_run:
@@ -8,7 +8,7 @@ on:
 
 env:
   REGION_DEFAULT: "us-east-1"
-  CLUSTER_NAME: "EKS-QuickFood"
+  CLUSTER_NAME: "EKS-QUICKFOOD"
 
 jobs:
   deploy:
@@ -27,42 +27,45 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.REGION_DEFAULT }}
 
-      # Deploy Backoffice
-      - name: Update Kube Config for Backoffice
-        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }}-BackOffice --region ${{ env.REGION_DEFAULT }}
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
-      - name: Deploy Backoffice Service
-        run: kubectl apply -f k8s/eks-svc-backoffice.yaml
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.REGION_DEFAULT }}
 
-      - name: Deploy Backoffice Deployment
-        run: kubectl apply -f k8s/eks-deployment-backoffice.yaml
+      - name: Apply Namespace
+        run: |
+          kubectl apply -f k8s/namespace.yaml
 
-      # Deploy Pagamento
-      - name: Update Kube Config for Pagamento
-        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }}-Pagamento --region ${{ env.REGION_DEFAULT }}
+      - name: Deploy Backoffice
+        run: |
+          kubectl apply -f k8s/backoffice/deployment.yaml
+          kubectl apply -f k8s/backoffice/service.yaml
+          kubectl apply -f k8s/backoffice/ingress.yaml
 
-      - name: Deploy Pagamento Service
-        run: kubectl apply -f k8s/eks-svc-pagamento.yaml
+      - name: Deploy Pagamento
+        run: |
+          kubectl apply -f k8s/pagamento/deployment.yaml
+          kubectl apply -f k8s/pagamento/service.yaml
+          kubectl apply -f k8s/pagamento/ingress.yaml
 
-      - name: Deploy Pagamento Deployment
-        run: kubectl apply -f k8s/eks-deployment-pagamento.yaml
+      - name: Deploy Pedido
+        run: |
+          kubectl apply -f k8s/pedido/deployment.yaml
+          kubectl apply -f k8s/pedido/service.yaml
+          kubectl apply -f k8s/pedido/ingress.yaml
 
-      # Deploy Pedido
-      - name: Update Kube Config for Pedido
-        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }}-Pedido --region ${{ env.REGION_DEFAULT }}
+      - name: Deploy Producao
+        run: |
+          kubectl apply -f k8s/producao/deployment.yaml
+          kubectl apply -f k8s/producao/service.yaml
+          kubectl apply -f k8s/producao/ingress.yaml
 
-      - name: Deploy Pedido Service
-        run: kubectl apply -f k8s/eks-svc-pedido.yaml
-
-      - name: Deploy Pedido Deployment
-        run: kubectl apply -f k8s/eks-deployment-pedido.yaml
-
-      # Deploy Producao
-      - name: Update Kube Config for Producao
-        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }}-Producao --region ${{ env.REGION_DEFAULT }}
-
-      - name: Deploy Producao Service
-        run: kubectl apply -f k8s/eks-svc-producao.yaml
-
-      - name: Deploy Producao Deployment
-        run: kubectl apply -f k8s/eks-deployment-producao.yaml
+      - name: Deploy SQL Server
+        run: |
+          kubectl apply -f k8s/sqlserver/deployment.yaml
+          kubectl apply -f k8s/sqlserver/service.yaml
+          kubectl apply -f k8s/sqlserver/ingress.yaml

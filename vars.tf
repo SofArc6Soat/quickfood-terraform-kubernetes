@@ -7,7 +7,7 @@ variable "regionDefault" {
 variable "projectName" {
   description = "The name of the project"
   type        = string
-  default     = "EKS-QuickFood"
+  default     = "EKS-QUICKFOOD"
 }
 
 variable "labRole" {
@@ -21,7 +21,6 @@ variable "accessConfig" {
   type        = string
   default     = "API_AND_CONFIG_MAP"
 }
-
 variable "nodeGroup" {
   description = "The node group for the EKS cluster"
   type        = string
@@ -31,7 +30,7 @@ variable "nodeGroup" {
 variable "instanceType" {
   description = "The instance type for the EC2 instances"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.medium"
 }
 
 variable "principalArn" {
@@ -44,17 +43,4 @@ variable "policyArn" {
   description = "The ARN of the policy"
   type        = string
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-}
-
-variable "db_username" {
-  description = "The username for the RDS instance"
-  type        = string
-  default     = "sa"
-}
-
-variable "db_password" {
-  description = "The password for the RDS instance"
-  type        = string
-  default     = "quickfood-backend#2024"
-  sensitive   = true
 }

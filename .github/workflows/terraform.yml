@@ -12,8 +12,6 @@ jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,10 +36,6 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
- 
-      - name: Terraform Destroy
-        id: destroy
-        run: terraform destroy -auto-approve || true
 
       - name: Terraform Validate
         id: validate
