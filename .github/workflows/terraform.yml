@@ -24,6 +24,10 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.REGION_DEFAULT }}
 
+      - name: Verify AWS Credentials
+        run: |
+          aws sts get-caller-identity
+          
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
