@@ -1,24 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: quickfood-backend-pagamento-deployment
+  name: quickfood-backend-pedido-deployment
+  namespace: quickfood
   labels:
-    app: quickfood-backend-pagamento
+    app: quickfood-backend-pedido
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: quickfood-backend-pagamento
+      app: quickfood-backend-pedido
   template:
     metadata:
       labels:
-        app: quickfood-backend-pagamento
+        app: quickfood-backend-pedido
     spec:
       containers:
-      - name: quickfood-backend-pagamento
-        image: sofarc6soat/quickfood-backend-pagamento:latest
+      - name: quickfood-backend-pedido
+        image: sofarc6soat/quickfood-backend-pedido:latest
         ports:
-        - containerPort: 82
+        - containerPort: 83
         resources:
           requests:
             cpu: "250m"

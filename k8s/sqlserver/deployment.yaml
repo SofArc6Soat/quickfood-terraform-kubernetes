@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quickfood-sqlserver-deployment
+  namespace: quickfood
+  labels:
+    app: quickfood-sqlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quickfood-sqlserver
+  template:
+    metadata:
+      labels:
+        app: quickfood-sqlserver
+    spec:
+      containers:
+      - name: quickfood-sqlserver
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          value: "YourStrong@Passw0rd"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
