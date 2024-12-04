@@ -1,53 +1,23 @@
-resource "aws_eks_cluster" "eks-cluster-backoffice" {
-  name     = "${var.projectName}-backoffice"
-  role_arn = var.labRole
+resource "aws_eks_cluster" "eks-cluster" {
+  name     = var.projectName
+  role_arn = aws_iam_role.eks-cluster.arn
 
   vpc_config {
-    subnet_ids         = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
-    security_group_ids = [aws_security_group.backend_sg_backoffice.id]
+    subnet_ids = [for subnet in aws_subnet.eks_subnet : subnet.id]
   }
 
-  access_config {
-    authentication_mode = var.accessConfig
-  }
-}
+  depends_on = [
+    aws_iam_role_policy_attachment.eks-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.eks-cluster-AmazonEKSServicePolicy,
+  ]
 
-resource "aws_eks_cluster" "eks-cluster-pagamento" {
-  name     = "${var.projectName}-pagamento"
-  role_arn = var.labRole
-
-  vpc_config {
-    subnet_ids         = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
-    security_group_ids = [aws_security_group.backend_sg_pagamento.id]
-  }
-
-  access_config {
-    authentication_mode = var.accessConfig
-  }
-}
-
-resource "aws_eks_cluster" "eks-cluster-pedido" {
-  name     = "${var.projectName}-pedido"
-  role_arn = var.labRole
-
-  vpc_config {
-    subnet_ids         = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
-    security_group_ids = [aws_security_group.backend_sg_pedido.id]
-  }
-
-  access_config {
-    authentication_mode = var.accessConfig
-  }
-}
-
-resource "aws_eks_cluster" "eks-cluster-producao" {
-  name     = "${var.projectName}-producao"
-  role_arn = var.labRole
-
-  vpc_config {
-    subnet_ids         = [for subnet in data.aws_subnet.subnet : subnet.id if subnet.availability_zone != "${var.regionDefault}e"]
-    security_group_ids = [aws_security_group.backend_sg_producao.id]
-  }
+  enabled_cluster_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
 
   access_config {
     authentication_mode = var.accessConfig
